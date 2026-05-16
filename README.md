@@ -34,6 +34,9 @@ es wird nur AC-Laden unterstützt. DC-Laden und Laden über die Offgrid Steckdos
   - input_number.p1_sensor_deathband // "Ruhebereich" ums Target, in diesen werden alle Regelvorgänge unterbunden
   - optional: input_select.zendure_source_mode // Auswahl ob MQTT oder Z-HA verwendet werden soll. Als Optionen "mqtt" und "z-ha" eintragen. Falls diese Entität fehlt wird standardmäßig MQTT genutzt
   - optional: input_select.zendure_active_pack // Auswahl des aktiven Speichers. Optionen können sein: "L1"/"L2"/"L1/L2" usw. Falls diese Entität fehlt, werden standartmäßig alle Speicher genutzt.
+
+    <img width="250" height="300" alt="image" src="https://github.com/user-attachments/assets/ca00a03c-f031-4be7-90b5-f55f8cef9c53" />
+
 - MQTT Broker in HA installieren und einrichten
 - in der Zendure App in den Geräteeinstellungen MQTT suchen und die Daten eures MQTT Brokers eintragen
 - AppDaemon installieren
@@ -43,10 +46,16 @@ es wird nur AC-Laden unterstützt. DC-Laden und Laden über die Offgrid Steckdos
   <img width="965" height="497" alt="image" src="https://github.com/user-attachments/assets/8c6c251c-2d3a-4242-accd-e89591c68f2f" />
 - Studio Code Server öffnen und im Suchfeld den Host Namen von AppDaemon eingeben
 - Dann solltest du im richtigen AppDaemon Ordner gelandet sein (liegt da schon eine apps.yaml? Dann bist du richtig).
+
+  <img width="285" height="571" alt="image" src="https://github.com/user-attachments/assets/71fefbe2-dbfc-4735-912b-193d048115b4" />
+
 - Code aus der meiner apps.yaml in deine apps.yaml kopieren
 - jetzt kommt der nervige Teil. Du musst deinen P1 Sensor (p1_entity) sowie deine MQTT und Z-HA Entitäten eintragen
    - An dieser Stelle entscheidet sich auch wie viele Geräte du hast. 3 Geräte sind angelegt, hast du weniger lösche die überflüßigen
    - Ausserdem werden an dieser Stelle eure gewünschten Leistungsbegrenzungen für jedes Gerät angegeben.
+
+     <img width="400" height="300" alt="image" src="https://github.com/user-attachments/assets/5b35803a-aba1-4a0e-9191-e58950599956" />
+
 - Im selben Ordner in der die apps.yaml liegt müsst ihr nun 2 Dateien anlegen:
    - smart_reg_app.py
    - smart_reg_distribution.py
