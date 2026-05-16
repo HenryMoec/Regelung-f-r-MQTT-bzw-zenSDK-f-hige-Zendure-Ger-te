@@ -32,7 +32,8 @@ es wird nur AC-Laden unterstützt. DC-Laden und Laden über die Offgrid Steckdos
   - input_boolean.zendure_bridge_py_aktiviert // Schalter zum aktivieren/deaktivieren der Regelung
   - input_number.p1_sensor_target // Regelziel in W; >0 = gewollter Netzbezug, <0 = gewollte Einspeisung
   - input_number.p1_sensor_deathband // "Ruhebereich" ums Target, in diesen werden alle Regelvorgänge unterbunden
-  - input_select.zendure_source_mode // Auswahl ob MQTT oder Z-HA verwendet werden soll. Als Optionen "mqtt" und "z-ha" eintragen. Falls diese Entität fehlt wird standardmäßig MQTT genutzt
+  - optional: input_select.zendure_source_mode // Auswahl ob MQTT oder Z-HA verwendet werden soll. Als Optionen "mqtt" und "z-ha" eintragen. Falls diese Entität fehlt wird standardmäßig MQTT genutzt
+  - optional: input_select.zendure_active_pack // Auswahl des aktiven Speichers. Optionen können sein: "L1"/"L2"/"L1/L2" usw. Falls diese Entität fehlt, werden standartmäßig alle Speicher genutzt.
 - MQTT Broker in HA installieren und einrichten
 - in der Zendure App in den Geräteeinstellungen MQTT suchen und die Daten eures MQTT Brokers eintragen
 - AppDaemon installieren
