@@ -32,6 +32,7 @@ es wird nur AC-Laden unterstützt. DC-Laden und Laden über die Offgrid Steckdos
   - input_boolean.zendure_bridge_py_aktiviert // Schalter zum aktivieren/deaktivieren der Regelung
   - input_number.p1_sensor_target // Regelziel in W; >0 = gewollter Netzbezug, <0 = gewollte Einspeisung
   - input_number.p1_sensor_deathband // "Ruhebereich" ums Target, in diesen werden alle Regelvorgänge unterbunden
+  - input_select.zendure_source_mode // Auswahl ob MQTT oder Z-HA verwendet werden soll. Als Optionen "mqtt" und "z-ha" eintragen. Falls diese Entität fehlt wird standardmäßig MQTT genutzt
 - MQTT Broker in HA installieren und einrichten
 - in der Zendure App in den Geräteeinstellungen MQTT suchen und die Daten eures MQTT Brokers eintragen
 - AppDaemon installieren
@@ -43,10 +44,10 @@ es wird nur AC-Laden unterstützt. DC-Laden und Laden über die Offgrid Steckdos
 - Dann solltest du im richtigen AppDaemon Ordner gelandet sein (liegt da schon eine apps.yaml? Dann bist du richtig).
 - Code aus der meiner apps.yaml in deine apps.yaml kopieren
 - jetzt kommt der nervige Teil. Du musst deinen P1 Sensor (p1_entity) sowie deine MQTT und Z-HA Entitäten eintragen
-   > An dieser Stelle entscheidet sich auch wie viele Geräte du hast. 3 Geräte sind angelegt, hast du weniger lösche die überflüßigen
-   > Ausserdem werden an dieser Stelle eure gewünschten Leistungsbegrenzungen für jedes Gerät angegeben.
+   - An dieser Stelle entscheidet sich auch wie viele Geräte du hast. 3 Geräte sind angelegt, hast du weniger lösche die überflüßigen
+   - Ausserdem werden an dieser Stelle eure gewünschten Leistungsbegrenzungen für jedes Gerät angegeben.
 - Im selben Ordner in der die apps.yaml liegt müsst ihr nun 2 Dateien anlegen:
-   > smart_reg_app.py
-   > smart_reg_distribution.py
-   > In diese kopiert ihr den Inhalt der hier entsprechend benannten Dateien.
-- input_boolean.zendure_bridge_py_aktiviert irgendwo aufs Dashboard ziehen und aktivieren. Unter optimalen Bedingungen sollte die Relung nun starten
+   - smart_reg_app.py
+   - smart_reg_distribution.py
+   - In diese kopiert ihr den Inhalt der hier entsprechend benannten Dateien.
+- input_boolean.zendure_bridge_py_aktiviert irgendwo aufs Dashboard ziehen und aktivieren. Unter optimalen Bedingungen sollte die Regelung nun starten
