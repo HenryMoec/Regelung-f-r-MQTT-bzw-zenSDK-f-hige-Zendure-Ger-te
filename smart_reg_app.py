@@ -87,11 +87,20 @@ class SmartRegManagerLike(hass.Hass):
                 return
 
             # 4. Aktuelle Daten der aktiven Packs sammeln
+            # FALLBACK für Pack-Auswahl: Wenn Entität fehlt, sind alle Packs aktiv
             selection = self.get_state("input_select.zendure_active_pack")
-            active_list = [x.strip().lower() for x in str(selection).split("/")] if selection else []
+            if selection in [None, "unknown", "unavailable"]:
+                # Keine Auswahl vorhanden? Dann erlauben wir einfach alle IDs pauschal
+                active_list = [p["id"].lower().split("_")[0] for p in self.packs]
+            else:
+                active_list = [x.strip().lower() for x in str(selection).split("/")] if selection else []
             
-            # NEU: Gewählten Quellen-Modus abfragen (liefert z.B. "mqtt" oder "z-ha")
-            source_mode = str(self.get_state("input_select.zendure_source_mode")).lower()
+            # FALLBACK für Quellen-Modus: Wenn Entität fehlt, nutzen wir "mqtt" als Standard
+            source_select = self.get_state("input_select.zendure_source_mode")
+            if source_select in [None, "unknown", "unavailable"]:
+                source_mode = "mqtt"
+            else:
+                source_mode = str(source_select).lower()
 
             powerActual = 0
             temp_devices = []
@@ -100,12 +109,14 @@ class SmartRegManagerLike(hass.Hass):
             for p in self.packs:
                 p_id = p["id"]
                 
-                # NEU: ID am Unterstrich aufspalten (z.B. "l1_mqtt" -> "l1", "mqtt")
+                # Wenn jemand deine ID-Struktur nicht nutzt (z.B. ID ist einfach nur "l1" ohne Unterstrich)
                 if "_" not in p_id:
-                    continue
-                base_id, p_mode = p_id.lower().split("_", 1)
+                    base_id = p_id.lower()
+                    p_mode = "mqtt" # Standard-Zuweisung, damit es matcht
+                else:
+                    base_id, p_mode = p_id.lower().split("_", 1)
                 
-                # NEU: Kombinierter Filter für Modus-Suffix und aktive Whitelist
+                # Kombinierter Filter für Modus-Suffix und aktive Whitelist
                 if p_mode != source_mode:
                     continue
                 if base_id not in active_list:
