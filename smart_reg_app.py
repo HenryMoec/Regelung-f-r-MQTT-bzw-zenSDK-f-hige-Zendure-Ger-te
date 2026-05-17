@@ -1,5 +1,6 @@
 import appdaemon.plugins.hass.hassapi as hass
 import smart_reg_distribution as dist
+import smart_reg_setpoint as sp
 import time
 from collections import deque
 from math import sqrt
@@ -62,7 +63,7 @@ class SmartRegManagerLike(hass.Hass):
             target = self.get_ha_val(self.target_w_entity)
             p1_raw = int(shelly - target)
             
-            # --- Deadband Anwendung ---
+            # --- Deadband Application ---
             deadband = abs(self.get_ha_val(self.deadband_entity))
             if abs(p1_raw) < deadband:
                 self.current_p1 = 0
@@ -142,45 +143,24 @@ class SmartRegManagerLike(hass.Hass):
                     "actual": p_real
                 })
 
-            # 5. Sollwert-Ermittlung (v1.7.0 - Dual-Phase Control)
-            u_sys_next = 0
-            state = "idle"
+            # 5. Sollwert-Ermittlung (Ausgelagert in smart_reg_setpoint)
+            abort_call, u_sys_next, state, self.zero_idle, zero_next_val, zero_fast_val = sp.calculate_setpoint(
+                p1=p1,
+                powerActual=powerActual,
+                zero_idle=self.zero_idle,
+                last_sent_values=self.last_sent_values,
+                now=now,
+                time_idle=self.time_idle,
+                min_power=self.min_power,
+                time_zero=self.time_zero,
+                time_fast=self.time_fast
+            )
             
-            # Dynamischen Korrekturfaktor (Gain) bestimmen
-            if abs(p1) > 100:
-                gain = 0.8  # Grobregelung: 80% Korrektur
-            else:
-                gain = 0.4  # Feinregelung: 40% Korrektur (etwas agiler als 30%)
-
-            # Berechnete Korrektur basierend auf P1 und Gain
-            correction = int(p1 * gain)
-
-            if powerActual < 0:
-                # Wir laden aktuell. Neuer Wert = Aktuelle Leistung + gedämpfte Korrektur
-                u_sys_next = min(0, powerActual + correction)
-                state = "input"
-            elif powerActual > 0:
-                # Wir entladen aktuell.
-                u_sys_next = max(0, powerActual + correction)
-                state = "output"
-            
-            elif self.zero_idle == float('inf') and not self.last_sent_values.get("active", False):
-                self.zero_idle = now + self.time_idle
+            if abort_call:
                 return
-            elif self.zero_idle < now or self.last_sent_values.get("active", False):
-                if p1 < -self.min_power:
-                    u_sys_next = int(p1 * 0.6) # Erster Sprung aus dem Stand
-                    state = "input"
-                    self.zero_idle = float('inf')
-                elif p1 >= 0:
-                    u_sys_next = int(p1 * 0.6) # Erster Sprung aus dem Stand
-                    state = "output"
-                    self.zero_idle = float('inf')
-                else:
-                    return
 
-            self.zero_next = now + self.time_zero
-            self.zero_fast = now + self.time_fast
+            self.zero_next = zero_next_val
+            self.zero_fast = zero_fast_val
 
             # 6. Bucket-Sortierung
             is_discharge = (state == "output")
@@ -267,7 +247,7 @@ class SmartRegManagerLike(hass.Hass):
 # v1.6.10 (2026-05-14):
 # - Zeile 140: int(d["soc"] / 10) zu int(min(d["soc"], 99) / 10), reverse=is_discharge)
 # - Zeile 26: self.time_idle = 5.0 auf self.time_idle = 2.0 
-# - Zeile 42: Variable self.current_p1 eingeführt, um Deadband-Status global zu speichern.
+# - Zeile 42: Variable self.current_p1 eingeführt, um Deadband-Status global zu保存.
 # - Zeile 66-70: Deadband setzt nun current_p1 auf 0.
 # - Zeile 163-167: In der apply-Methode wird das Senden neuer Befehle blockiert, 
 #   wenn current_p1 == 0 ist. Die Berechnung läuft im Hintergrund stabil weiter.
