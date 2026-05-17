@@ -59,5 +59,6 @@ es wird nur AC-Laden unterstützt. DC-Laden und Laden über die Offgrid Steckdos
 - Im selben Ordner in der die apps.yaml liegt müsst ihr nun 2 Dateien anlegen:
    - smart_reg_app.py
    - smart_reg_distribution.py
+   - smart_reg_setpoint.py
    - In diese kopiert ihr den Inhalt der hier entsprechend benannten Dateien.
 - input_boolean.zendure_bridge_py_aktiviert irgendwo aufs Dashboard ziehen und aktivieren. Unter optimalen Bedingungen sollte die Regelung nun starten
