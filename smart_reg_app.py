@@ -22,7 +22,7 @@ class SmartRegManagerLike(hass.Hass):
         # Regel-Parameter
         self.threshold = 2.0           
         self.time_zero = 2.0           
-        self.time_fast = 4.0          
+        self.time_fast = 3.0          
         self.time_idle = 2.0           
         self.min_power = 50            
         
@@ -169,11 +169,11 @@ class SmartRegManagerLike(hass.Hass):
                 return
             elif self.zero_idle < now or self.last_sent_values.get("active", False):
                 if p1 < -self.min_power:
-                    u_sys_next = int(p1 * 0.4) # Erster Sprung aus dem Stand
+                    u_sys_next = int(p1 * 0.6) # Erster Sprung aus dem Stand
                     state = "input"
                     self.zero_idle = float('inf')
                 elif p1 >= 0:
-                    u_sys_next = int(p1 * 0.4) # Erster Sprung aus dem Stand
+                    u_sys_next = int(p1 * 0.6) # Erster Sprung aus dem Stand
                     state = "output"
                     self.zero_idle = float('inf')
                 else:
@@ -267,7 +267,6 @@ class SmartRegManagerLike(hass.Hass):
 # v1.6.10 (2026-05-14):
 # - Zeile 140: int(d["soc"] / 10) zu int(min(d["soc"], 99) / 10), reverse=is_discharge)
 # - Zeile 26: self.time_idle = 5.0 auf self.time_idle = 2.0 
-# - Zeile 25: self.time_fast = 10.0 auf self.time_fast = 5.0
 # - Zeile 42: Variable self.current_p1 eingeführt, um Deadband-Status global zu speichern.
 # - Zeile 66-70: Deadband setzt nun current_p1 auf 0.
 # - Zeile 163-167: In der apply-Methode wird das Senden neuer Befehle blockiert, 
@@ -283,7 +282,3 @@ class SmartRegManagerLike(hass.Hass):
 # - Zeile 74: Mittelwert-Bedingung von (len(self.zorder) > 1) auf (> 0) korrigiert. Verhindert, 
 #   dass isFast nach einem gelöschten Filter in Dauerschleife hängen bleibt und kleine Lasten 
 #   (Kühlschrank) die Abklingzeit aushebeln.
-# - Zeile 123: Aufwach-Bedingung für das Entladen von (p1 >= 0) auf (p1 > self.min_power) verschärft.
-# - Zeile 128: Das harte 'return' im Aufwach-Block durch 'pass' ersetzt. Verhindert, dass das 
-#   System nachts im Deadband (p1=0) fälschlicherweise in den Output-Modus springt und sorgt 
-#   dafür, dass die Speicher sauber in den IDLE-Zustand abgeschaltet werden. 
