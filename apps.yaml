@@ -11,18 +11,22 @@ smart_reg_manager_like:
   deadband_w: input_number.p1_sensor_deathband
 
   packs:
-    - id: l1_mqtt
-      soc_entity: sensor.eeb4aep1p031393_electriclevel
-      minsoc_entity: number.eeb4aep1p031393_minsoc
-      maxsoc_entity: number.eeb4aep1p031393_socset
-      battery_output_entity: sensor.eeb4aep1p031393_packinputpower
-      battery_input_entity: sensor.eeb4aep1p031393_outputpackpower
-      out_limit_entity: number.eeb4aep1p031393_outputlimit
-      in_limit_entity: number.eeb4aep1p031393_inputlimit
-      ac_mode_entity: select.eeb4aep1p031393_acmode
+    - id: "l1_mqtt"
+      sn: "SN"
       max_out_w: 2400
-      max_in_w:  2400
+      max_in_w: 2400
+
+    - id: "l2_mqtt"
+      sn: "SN"
+      max_out_w: 2400
+      max_in_w: 2400
     
+    - id: "l3_mqtt"
+      sn: "SN"
+      max_out_w: 2400
+      max_in_w: 2400
+      
+       
     - id: l1_z-ha
       soc_entity: sensor.l1_solarflow_2400_pro_electric_level
       minsoc_entity: number.l1_solarflow_2400_pro_min_soc
@@ -35,18 +39,7 @@ smart_reg_manager_like:
       fuse_group_entity: select.l1_solarflow_2400_pro_fuse_group
       max_out_w: 2400
       max_in_w:  2400
-    
-    - id: l2_mqtt
-      soc_entity: sensor.hoa1npn3n203982_electriclevel
-      minsoc_entity: number.hoa1npn3n203982_minsoc
-      maxsoc_entity: number.hoa1npn3n203982_socset
-      battery_output_entity: sensor.hoa1npn3n203982_packinputpower
-      battery_input_entity: sensor.hoa1npn3n203982_outputpackpower
-      out_limit_entity: number.hoa1npn3n203982_outputlimit
-      in_limit_entity: number.hoa1npn3n203982_inputlimit
-      ac_mode_entity:   select.hoa1npn3n203982_acmode
-      max_out_w: 2400
-      max_in_w:  2400
+   
 
     - id: l2_z-ha
       soc_entity: sensor.l2_solarflow_2400_ac_electric_level
@@ -61,18 +54,7 @@ smart_reg_manager_like:
       max_out_w: 2400
       max_in_w:  2400
 
-    - id: l3_mqtt
-      soc_entity: sensor.hoa1npn4n230807_electriclevel
-      minsoc_entity: number.hoa1npn4n230807_minsoc
-      maxsoc_entity: number.hoa1npn4n230807_socset
-      battery_output_entity: sensor.hoa1npn4n230807_packinputpower
-      battery_input_entity: sensor.hoa1npn4n230807_outputpackpower
-      out_limit_entity: number.hoa1npn4n230807_outputlimit
-      in_limit_entity: number.hoa1npn4n230807_inputlimit
-      ac_mode_entity:   select.hoa1npn4n230807_acmode
-      max_out_w: 2400
-      max_in_w:  2400
-
+ 
     - id: l3_z-ha
       soc_entity: sensor.l3_solarflow_2400_ac_electric_level
       minsoc_entity: number.l3_solarflow_2400_ac_min_soc
