@@ -50,7 +50,8 @@ es wird nur AC-Laden unterstützt. DC-Laden und Laden über die Offgrid Steckdos
   <img width="285" height="571" alt="image" src="https://github.com/user-attachments/assets/71fefbe2-dbfc-4735-912b-193d048115b4" />
 
 - Code aus der meiner apps.yaml in deine apps.yaml kopieren
-- jetzt kommt der nervige Teil. Du musst deinen P1 Sensor (p1_entity) sowie deine MQTT und Z-HA Entitäten eintragen
+- jetzt kommt der nervige Teil. Du musst deinen P1 Sensor (p1_entity) und Z-HA Entitäten eintragen. Für deine MQTT Geräte reicht nun die Seriennummer, die Entitäten werden automatisch importiert. Sollte dies aufgrund einer anderen Nomenklatur nicht funktionieren, müssen die die Entitäten in den auskommentierten MQTT Blöcken einzeln eingetragen werden.
+- ACHTUNG: Solltest du MQTT oder Z-HA nicht verwenden wollen, lösche die entsprechenden Blöcke.
    - An dieser Stelle entscheidet sich auch wie viele Geräte du hast. 3 Geräte sind angelegt, hast du weniger lösche die überflüßigen
    - Ausserdem werden an dieser Stelle eure gewünschten Leistungsbegrenzungen für jedes Gerät angegeben.
 
