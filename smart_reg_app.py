@@ -14,6 +14,20 @@ class SmartRegManagerLike(hass.Hass):
         self.deadband_entity = self.args.get("deadband_w", 30)
         self.packs = self.args["packs"]
         
+        # --- NEU: Automatische MQTT-Entitäten-Erkennung ---
+        for pack in self.packs:
+            if "sn" in pack:
+                sn_lower = str(pack["sn"]).lower()
+                pack["soc_entity"] = f"sensor.{sn_lower}_electriclevel"
+                pack["minsoc_entity"] = f"number.{sn_lower}_minsoc"
+                pack["maxsoc_entity"] = f"number.{sn_lower}_socset"
+                pack["battery_output_entity"] = f"sensor.{sn_lower}_packinputpower"
+                pack["battery_input_entity"] = f"sensor.{sn_lower}_outputpackpower"
+                pack["out_limit_entity"] = f"number.{sn_lower}_outputlimit"
+                pack["in_limit_entity"] = f"number.{sn_lower}_inputlimit"
+                pack["ac_mode_entity"] = f"select.{sn_lower}_acmode"
+        # ----------------------------------------------------
+        
         # --- zenZDK Core Variablen ---
         self.zorder = deque([25, -25], maxlen=8)
         self.zero_idle = float('inf') 
@@ -33,6 +47,7 @@ class SmartRegManagerLike(hass.Hass):
         self.current_p1 = 0 # Neu: Um den p1-Status für apply verfügbar zu machen
 
         self.listen_state(self.update_power, self.p1_entity)
+        
         # NEU: Listener für die Packauswahl und den Quellen-Modus
         self.listen_state(self.update_power, "input_select.zendure_active_pack")
         self.listen_state(self.update_power, "input_select.zendure_source_mode")
