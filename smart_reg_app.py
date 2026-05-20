@@ -1,3 +1,5 @@
+#smart_reg_app.py v1.7.6
+
 import appdaemon.plugins.hass.hassapi as hass
 import smart_reg_distribution as dist
 import smart_reg_setpoint as sp
@@ -52,7 +54,7 @@ class SmartRegManagerLike(hass.Hass):
         self.listen_state(self.update_power, "input_select.zendure_active_pack")
         self.listen_state(self.update_power, "input_select.zendure_source_mode")
         
-        self.log(f"!!! V1.6.10 - APPLY-BLOCKING DEADBAND !!!")
+        self.log(f"!!! Smart Regulation v1.7.6 is running !!!")
 
     def get_ha_val(self, key_or_val):
         """Hilfsfunktion zum sicheren Auslesen von HA-Entitäten."""
@@ -179,7 +181,7 @@ class SmartRegManagerLike(hass.Hass):
 
             # 6. Bucket-Sortierung
             is_discharge = (state == "output")
-            temp_devices.sort(key=lambda d: int(min(d["soc"], 99) / 10), reverse=is_discharge)
+            temp_devices.sort(key=lambda d: int(min(d["soc"], 99) / 20), reverse=is_discharge)
             
             if temp_devices:
                 new_leader = temp_devices[0]['id']
@@ -195,16 +197,28 @@ class SmartRegManagerLike(hass.Hass):
                 self.log(f"MONITOR: P1={int(shelly)}W | Set={int(u_sys_next)}W | Dist={res} | SoCs={soc_info}")
                 self.apply(res, "output")
                 self.last_sent_values["active"] = True
+                self.last_sent_values["last_state"] = "output"
+                # Einzelwerte im Speicher für den Tacho-Abgleich hinterlegen
+                for p_id, val in res.items():
+                    self.last_sent_values[p_id] = val
             elif state == "input":
                 res = dist.calculate_v113(temp_devices, abs(u_sys_next), "input")
                 self.log(f"MONITOR: P1={int(shelly)}W | Set={int(u_sys_next)}W | Dist={res} | SoCs={soc_info}")
                 self.apply(res, "input")
                 self.last_sent_values["active"] = True
+                self.last_sent_values["last_state"] = "input"
+                # Einzelwerte im Speicher für den Tacho-Abgleich hinterlegen
+                for p_id, val in res.items():
+                    self.last_sent_values[p_id] = val
             else:
                 if self.last_sent_values.get("active", False):
                     self.log(f"MONITOR: System geht in IDLE (P1={int(shelly)}W) | SoCs={soc_info}")
                     self.apply({}, "idle")
                     self.last_sent_values["active"] = False
+                    self.last_sent_values["last_state"] = "idle"
+                    # Bei IDLE alle alten Leistungswerte nullen
+                    for p in self.packs:
+                        self.last_sent_values[p["id"]] = 0
 
         except Exception as e:
             self.log(f"Fehler: {e}")
